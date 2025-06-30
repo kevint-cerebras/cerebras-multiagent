@@ -1,91 +1,17 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #f5f5f5;
-}
+/* Purge most custom styles, keep only what is necessary for overrides or unique effects not covered by Tailwind. */
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
-
-/* Custom scrollbar for output */
-*::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-*::-webkit-scrollbar-track {
-  background: #2a2a2a;
-  border-radius: 5px;
-}
-
-*::-webkit-scrollbar-thumb {
-  background: #555;
-  border-radius: 5px;
-}
-
-*::-webkit-scrollbar-thumb:hover {
-  background: #777;
-}
-
-/* MUI Select dropdown styling */
-.MuiSelect-select {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-/* Tab panel animations */
-[role="tabpanel"] {
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Card hover effects */
-.MuiCard-root {
-  transition: box-shadow 0.3s ease-in-out;
-}
-
-.MuiCard-root:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
-}
-
-/* Button animations */
-.MuiButton-root {
-  transition: all 0.2s ease-in-out;
-}
-
-.MuiButton-root:hover {
-  transform: translateY(-2px);
-}
-
-/* List item hover effects */
-.MuiListItem-root {
-  transition: background-color 0.2s ease-in-out;
-}
-
-.MuiListItem-root:hover {
-  background-color: rgba(0, 0, 0, 0.04);
-}
-
-/* Output terminal styling */
 .output-terminal {
   font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
   font-size: 14px;
   line-height: 1.6;
+  background: #1a1a1a;
+  color: #e2e8f0;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+pre {
+  margin: 0 !important;
+  border-radius: 8px !important;
+  background: rgba(0, 0, 0, 0.2) !important;
 }

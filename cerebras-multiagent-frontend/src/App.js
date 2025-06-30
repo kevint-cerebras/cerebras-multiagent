@@ -1,45 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Container,
-  Box,
-  Paper,
-  Typography,
-  TextField,
-  Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Chip,
-  IconButton,
-  Alert,
-  CircularProgress,
-  Tabs,
-  Tab,
-  Grid,
-  Card,
-  CardContent,
-  Divider,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Snackbar,
-} from '@mui/material';
-import {
-  Add as AddIcon,
-  Delete as DeleteIcon,
-  Edit as EditIcon,
-  PlayArrow as PlayArrowIcon,
-  Stop as StopIcon,
-  Settings as SettingsIcon,
-  Code as CodeIcon,
-  Psychology as PsychologyIcon,
-} from '@mui/icons-material';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import python from 'react-syntax-highlighter/dist/esm/languages/hljs/python';
 import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
@@ -50,16 +9,10 @@ SyntaxHighlighter.registerLanguage('python', python);
 
 const API_BASE = 'http://localhost:5000';
 
-function TabPanel({ children, value, index, ...other }) {
+function TabPanel({ children, value, index }) {
   return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`tabpanel-${index}`}
-      aria-labelledby={`tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    <div hidden={value !== index} className={value === index ? 'animate-fadeIn' : ''}>
+      {value === index && <div className="py-6">{children}</div>}
     </div>
   );
 }
@@ -146,33 +99,27 @@ function App() {
       setError('Please set your Cerebras API key');
       return;
     }
-
     if (!prompt) {
       setError('Please enter a prompt');
       return;
     }
-
     if (agents.length === 0) {
       setError('Please add at least one agent');
       return;
     }
-
     setIsRunning(true);
     setOutput('');
     setExecutionLogs('');
     setFinalResult('');
     setError('');
-
     try {
       setOutput('🚀 Starting multi-agent execution...\n');
-      
       const response = await axios.post(`${API_BASE}/api/run`, {
         apiKey,
         modelId: selectedModel,
         prompt,
         agents,
       });
-
       if (response.data.status === 'completed') {
         setExecutionLogs(response.data.execution_logs || 'No execution logs available');
         setFinalResult(response.data.result || 'No result available');
@@ -192,339 +139,225 @@ function App() {
     }
   };
 
+  // --- UI ---
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h3" component="h1" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <PsychologyIcon sx={{ fontSize: 48 }} />
-          Cerebras Multi-Agent System
-        </Typography>
-        <Typography variant="subtitle1" color="text.secondary">
-          Orchestrate multiple AI agents powered by Cerebras models
-        </Typography>
-      </Box>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 text-slate-100">
+      <div className="max-w-5xl mx-auto px-4 py-10">
+        {/* Hero Section */}
+        <div className="text-center mb-10">
+          <div className="flex justify-center items-center gap-3 mb-2">
+            <span className="inline-block bg-gradient-to-tr from-teal-400 to-cyan-400 p-3 rounded-full shadow-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-slate-900"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" /></svg>
+            </span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-tr from-teal-400 to-cyan-400 bg-clip-text text-transparent mb-2">Multi-Agent Search</h1>
+          <p className="text-lg text-slate-400">Run multiple AI Agents with Cerebras models</p>
+        </div>
 
-      <Paper sx={{ mb: 3 }}>
-        <Tabs value={tabValue} onChange={(e, v) => setTabValue(v)}>
-          <Tab icon={<SettingsIcon />} label="Configuration" />
-          <Tab icon={<CodeIcon />} label="Agents" />
-          <Tab icon={<PlayArrowIcon />} label="Execute" />
-        </Tabs>
-      </Paper>
+        {/* Tabs */}
+        <div className="flex justify-center mb-8">
+          <nav className="bg-slate-800 rounded-xl flex overflow-hidden shadow-lg">
+            {["Configuration", "Agents", "Execute"].map((label, idx) => (
+              <button
+                key={label}
+                className={`px-6 py-3 font-medium transition-colors duration-200 focus:outline-none ${tabValue === idx ? 'bg-gradient-to-tr from-teal-400 to-cyan-400 text-slate-900' : 'text-slate-300 hover:bg-slate-700'}`}
+                onClick={() => setTabValue(idx)}
+              >
+                {label}
+              </button>
+            ))}
+          </nav>
+        </div>
 
-      <TabPanel value={tabValue} index={0}>
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  API Configuration
-                </Typography>
-                <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-                  <TextField
-                    fullWidth
-                    label="Cerebras API Key"
-                    type="password"
-                    value={apiKey}
-                    onChange={(e) => setApiKey(e.target.value)}
-                    placeholder="sk-..."
-                  />
-                  <Button
-                    variant="contained"
-                    onClick={handleSaveApiKey}
-                    sx={{ minWidth: 120 }}
-                  >
-                    Save
-                  </Button>
-                </Box>
+        {/* Tab Panels */}
+        <TabPanel value={tabValue} index={0}>
+          <div className="bg-slate-800/80 rounded-2xl shadow-xl p-8 mb-6">
+            <h2 className="text-2xl font-bold mb-4">API Configuration</h2>
+            <div className="flex flex-col md:flex-row gap-4 mb-6">
+              <input
+                className="flex-1 px-4 py-3 rounded-lg bg-slate-900/70 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-teal-400 outline-none"
+                type="password"
+                placeholder="Cerebras API Key"
+                value={apiKey}
+                onChange={e => setApiKey(e.target.value)}
+              />
+              <button
+                className="px-6 py-3 rounded-lg bg-gradient-to-tr from-teal-400 to-cyan-400 text-slate-900 font-semibold shadow hover:scale-105 transition"
+                onClick={handleSaveApiKey}
+              >
+                Save
+              </button>
+            </div>
+            <div>
+              <label className="block mb-2 text-slate-300 font-medium">Model</label>
+              <select
+                className="w-full px-4 py-3 rounded-lg bg-slate-900/70 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-teal-400 outline-none"
+                value={selectedModel}
+                onChange={e => setSelectedModel(e.target.value)}
+              >
+                {models.map(model => (
+                  <option key={model.id} value={model.id}>
+                    {model.name} ({model.params} • {model.speed})
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </TabPanel>
 
-                <FormControl fullWidth>
-                  <InputLabel>Model</InputLabel>
-                  <Select
-                    value={selectedModel}
-                    onChange={(e) => setSelectedModel(e.target.value)}
-                    label="Model"
-                  >
-                    {models.map((model) => (
-                      <MenuItem key={model.id} value={model.id}>
-                        <Box>
-                          <Typography variant="body1">{model.name}</Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {model.params} • {model.speed}
-                          </Typography>
-                        </Box>
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-      </TabPanel>
-
-      <TabPanel value={tabValue} index={1}>
-        <Card>
-          <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h6">Agents</Typography>
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
+        <TabPanel value={tabValue} index={1}>
+          <div className="bg-slate-800/80 rounded-2xl shadow-xl p-8 mb-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold">Agents</h2>
+              <button
+                className="flex items-center gap-2 px-5 py-2 rounded-lg bg-gradient-to-tr from-teal-400 to-cyan-400 text-slate-900 font-semibold shadow hover:scale-105 transition"
                 onClick={handleAddAgent}
               >
-                Add Agent
-              </Button>
-            </Box>
-            <List>
+                <span className="text-xl">+</span> Add Agent
+              </button>
+            </div>
+            <ul className="divide-y divide-slate-700">
               {agents.map((agent, index) => (
-                <React.Fragment key={index}>
-                  <ListItem>
-                    <ListItemText
-                      primary={agent.name}
-                      secondary={
-                        <>
-                          <Chip
-                            label={agent.type}
-                            size="small"
-                            color={agent.type === 'CodeAgent' ? 'primary' : 'secondary'}
-                            sx={{ mr: 1 }}
-                          />
-                          {agent.description}
-                        </>
-                      }
-                    />
-                    <ListItemSecondaryAction>
-                      <IconButton onClick={() => handleEditAgent(index)}>
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton onClick={() => handleDeleteAgent(index)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                  {index < agents.length - 1 && <Divider />}
-                </React.Fragment>
+                <li key={index} className="flex justify-between items-center py-4">
+                  <div>
+                    <div className="font-semibold text-lg">{agent.name}</div>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className={`px-2 py-1 rounded text-xs font-bold ${agent.type === 'CodeAgent' ? 'bg-cyan-700 text-cyan-200' : 'bg-teal-700 text-teal-200'}`}>{agent.type}</span>
+                      <span className="text-slate-400 text-sm">{agent.description}</span>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button className="p-2 rounded hover:bg-slate-700" onClick={() => handleEditAgent(index)}>
+                      <span role="img" aria-label="edit">✏️</span>
+                    </button>
+                    <button className="p-2 rounded hover:bg-slate-700" onClick={() => handleDeleteAgent(index)}>
+                      <span role="img" aria-label="delete">🗑️</span>
+                    </button>
+                  </div>
+                </li>
               ))}
-            </List>
-          </CardContent>
-        </Card>
-      </TabPanel>
+            </ul>
+          </div>
+        </TabPanel>
 
-      <TabPanel value={tabValue} index={2}>
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Prompt
-                </Typography>
-                <TextField
-                  fullWidth
-                  multiline
-                  rows={6}
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Enter your prompt here..."
-                  variant="outlined"
-                  sx={{ mb: 2 }}
-                />
-                <Box sx={{ display: 'flex', gap: 2 }}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={isRunning ? <StopIcon /> : <PlayArrowIcon />}
-                    onClick={handleRun}
-                    disabled={isRunning}
-                    size="large"
-                  >
-                    {isRunning ? 'Running...' : 'Execute'}
-                  </Button>
-                  {isRunning && <CircularProgress size={24} />}
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {(output || error) && (
-            <Grid item xs={12}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Status
-                  </Typography>
-                  {error && (
-                    <Alert severity="error" sx={{ mb: 2 }}>
-                      {error}
-                    </Alert>
-                  )}
-                  {output && (
-                    <Paper
-                      variant="outlined"
-                      sx={{
-                        p: 2,
-                        backgroundColor: '#1e1e1e',
-                        maxHeight: 200,
-                        overflow: 'auto',
-                      }}
-                    >
-                      <SyntaxHighlighter
-                        language="text"
-                        style={atomOneDark}
-                        customStyle={{
-                          margin: 0,
-                          backgroundColor: 'transparent',
-                        }}
-                      >
-                        {output}
-                      </SyntaxHighlighter>
-                    </Paper>
-                  )}
-                </CardContent>
-              </Card>
-            </Grid>
-          )}
-
-          {executionLogs && (
-            <Grid item xs={12}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    🤖 Agent Execution Logs
-                  </Typography>
-                  <Paper
-                    variant="outlined"
-                    sx={{
-                      p: 2,
-                      backgroundColor: '#1e1e1e',
-                      maxHeight: 400,
-                      overflow: 'auto',
-                    }}
-                  >
-                    <SyntaxHighlighter
-                      language="text"
-                      style={atomOneDark}
-                      customStyle={{
-                        margin: 0,
-                        backgroundColor: 'transparent',
-                        fontSize: '12px',
-                      }}
-                    >
-                      {executionLogs}
-                    </SyntaxHighlighter>
-                  </Paper>
-                </CardContent>
-              </Card>
-            </Grid>
-          )}
-
-          {finalResult && (
-            <Grid item xs={12}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    ✨ Final Result
-                  </Typography>
-                  <Paper
-                    variant="outlined"
-                    sx={{
-                      p: 3,
-                      backgroundColor: '#f8f9fa',
-                      border: '2px solid #4caf50',
-                    }}
-                  >
-                    <Typography
-                      variant="body1"
-                      component="pre"
-                      sx={{
-                        whiteSpace: 'pre-wrap',
-                        fontFamily: 'monospace',
-                        fontSize: '14px',
-                        margin: 0,
-                      }}
-                    >
-                      {finalResult}
-                    </Typography>
-                  </Paper>
-                </CardContent>
-              </Card>
-            </Grid>
-          )}
-        </Grid>
-      </TabPanel>
-
-      {/* Agent Dialog */}
-      <Dialog
-        open={agentDialog.open}
-        onClose={() => setAgentDialog({ open: false, agent: null, index: -1 })}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>
-          {agentDialog.index === -1 ? 'Add Agent' : 'Edit Agent'}
-        </DialogTitle>
-        <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
-            <TextField
-              fullWidth
-              label="Name"
-              value={agentDialog.agent?.name || ''}
-              onChange={(e) =>
-                setAgentDialog({
-                  ...agentDialog,
-                  agent: { ...agentDialog.agent, name: e.target.value },
-                })
-              }
+        <TabPanel value={tabValue} index={2}>
+          <div className="bg-slate-800/80 rounded-2xl shadow-xl p-8 mb-6">
+            <h2 className="text-2xl font-bold mb-4">Prompt</h2>
+            <textarea
+              className="w-full px-4 py-3 rounded-lg bg-slate-900/70 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-teal-400 outline-none mb-4"
+              rows={6}
+              value={prompt}
+              onChange={e => setPrompt(e.target.value)}
+              placeholder="Enter your prompt here..."
             />
-            <FormControl fullWidth>
-              <InputLabel>Type</InputLabel>
-              <Select
-                value={agentDialog.agent?.type || 'ToolCallingAgent'}
-                onChange={(e) =>
-                  setAgentDialog({
-                    ...agentDialog,
-                    agent: { ...agentDialog.agent, type: e.target.value },
-                  })
-                }
-                label="Type"
+            <div className="flex gap-4 items-center">
+              <button
+                className="px-8 py-3 rounded-lg bg-gradient-to-tr from-teal-400 to-cyan-400 text-slate-900 font-semibold shadow hover:scale-105 transition flex items-center gap-2 text-lg"
+                onClick={handleRun}
+                disabled={isRunning}
               >
-                <MenuItem value="ToolCallingAgent">Tool Calling Agent</MenuItem>
-                <MenuItem value="CodeAgent">Code Agent</MenuItem>
-              </Select>
-            </FormControl>
-            <TextField
-              fullWidth
-              label="Description"
-              multiline
-              rows={3}
-              value={agentDialog.agent?.description || ''}
-              onChange={(e) =>
-                setAgentDialog({
-                  ...agentDialog,
-                  agent: { ...agentDialog.agent, description: e.target.value },
-                })
-              }
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setAgentDialog({ open: false, agent: null, index: -1 })}>
-            Cancel
-          </Button>
-          <Button onClick={handleSaveAgent} variant="contained">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+                {isRunning ? <span className="animate-spin">⏳</span> : <span>▶️</span>}
+                {isRunning ? 'Running...' : 'Execute'}
+              </button>
+              {isRunning && <span className="ml-2 text-teal-400 animate-pulse">Running...</span>}
+            </div>
+          </div>
+          {(output || error) && (
+            <div className="bg-slate-900/80 rounded-2xl shadow-xl p-6 mb-6">
+              <h3 className="text-xl font-bold mb-2">Status</h3>
+              {error && (
+                <div className="bg-red-800/40 text-red-200 rounded p-3 mb-2 font-semibold">{error}</div>
+              )}
+              {output && (
+                <div className="output-terminal overflow-auto max-h-48 mt-2">
+                  <SyntaxHighlighter
+                    language="text"
+                    style={atomOneDark}
+                    customStyle={{ margin: 0, backgroundColor: 'transparent' }}
+                  >
+                    {output}
+                  </SyntaxHighlighter>
+                </div>
+              )}
+            </div>
+          )}
+          {executionLogs && (
+            <div className="bg-slate-900/80 rounded-2xl shadow-xl p-6 mb-6">
+              <h3 className="text-xl font-bold mb-2">🤖 Agent Execution Logs</h3>
+              <div className="output-terminal overflow-auto max-h-96">
+                <SyntaxHighlighter
+                  language="text"
+                  style={atomOneDark}
+                  customStyle={{ margin: 0, backgroundColor: 'transparent', fontSize: '12px' }}
+                >
+                  {executionLogs}
+                </SyntaxHighlighter>
+              </div>
+            </div>
+          )}
+          {finalResult && (
+            <div className="bg-gradient-to-tr from-teal-900/80 to-cyan-900/80 rounded-2xl shadow-xl p-6 mb-6 border-2 border-teal-400">
+              <h3 className="text-xl font-bold mb-2">✨ Final Result</h3>
+              <pre className="whitespace-pre-wrap font-mono text-base text-teal-200">{finalResult}</pre>
+            </div>
+          )}
+        </TabPanel>
 
-      {/* Snackbar */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={3000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        message={snackbar.message}
-      />
-    </Container>
+        {/* Agent Dialog */}
+        {agentDialog.open && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+            <div className="bg-slate-800 rounded-2xl shadow-2xl p-8 w-full max-w-lg">
+              <h2 className="text-2xl font-bold mb-4">{agentDialog.index === -1 ? 'Add Agent' : 'Edit Agent'}</h2>
+              <div className="flex flex-col gap-4">
+                <input
+                  className="px-4 py-3 rounded-lg bg-slate-900/70 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-teal-400 outline-none"
+                  type="text"
+                  placeholder="Name"
+                  value={agentDialog.agent?.name || ''}
+                  onChange={e => setAgentDialog({ ...agentDialog, agent: { ...agentDialog.agent, name: e.target.value } })}
+                />
+                <select
+                  className="px-4 py-3 rounded-lg bg-slate-900/70 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-teal-400 outline-none"
+                  value={agentDialog.agent?.type || 'ToolCallingAgent'}
+                  onChange={e => setAgentDialog({ ...agentDialog, agent: { ...agentDialog.agent, type: e.target.value } })}
+                >
+                  <option value="ToolCallingAgent">Tool Calling Agent</option>
+                  <option value="CodeAgent">Code Agent</option>
+                </select>
+                <textarea
+                  className="px-4 py-3 rounded-lg bg-slate-900/70 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-teal-400 outline-none"
+                  rows={3}
+                  placeholder="Description"
+                  value={agentDialog.agent?.description || ''}
+                  onChange={e => setAgentDialog({ ...agentDialog, agent: { ...agentDialog.agent, description: e.target.value } })}
+                />
+              </div>
+              <div className="flex justify-end gap-4 mt-6">
+                <button
+                  className="px-5 py-2 rounded-lg bg-slate-700 text-slate-200 hover:bg-slate-600 transition"
+                  onClick={() => setAgentDialog({ open: false, agent: null, index: -1 })}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="px-5 py-2 rounded-lg bg-gradient-to-tr from-teal-400 to-cyan-400 text-slate-900 font-semibold shadow hover:scale-105 transition"
+                  onClick={handleSaveAgent}
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Snackbar */}
+        {snackbar.open && (
+          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-slate-100 px-6 py-3 rounded-lg shadow-lg border border-teal-400 animate-fadeIn z-50">
+            {snackbar.message}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
