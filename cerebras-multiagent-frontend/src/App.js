@@ -7,7 +7,7 @@ import './App.css';
 
 SyntaxHighlighter.registerLanguage('python', python);
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = 'https://cerebras-multiagent-1.onrender.com';
 
 function TabPanel({ children, value, index }) {
   return (
