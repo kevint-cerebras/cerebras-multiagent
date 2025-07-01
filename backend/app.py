@@ -65,6 +65,12 @@ class StreamCapture:
         pass
 
 
+@app.route('/', methods=['GET', 'HEAD'])
+def health_check():
+    """Health check endpoint for Render"""
+    return jsonify({'status': 'healthy', 'service': 'cerebras-multiagent-backend'})
+
+
 @app.route('/api/models', methods=['GET'])
 def get_models():
     """Return available Cerebras models"""
@@ -252,4 +258,5 @@ def get_default_config():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
