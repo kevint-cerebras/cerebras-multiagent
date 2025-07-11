@@ -1,0 +1,22 @@
+# Core web framework
+flask>=2.3.0
+flask-cors>=4.0.0
+
+# HTTP requests and web scraping
+requests>=2.31.0
+markdownify>=0.11.6
+
+# Multi-agent framework and dependencies
+smolagents[toolkit]
+litellm>=1.40.0
+
+# Cerebras SDK
+cerebras-cloud-sdk>=1.0.0
+
+# Additional utilities that may be needed
+numpy>=1.24.0
+pandas>=2.0.0
+
+# Optional but recommended for production
+gunicorn>=21.0.0
+python-dotenv>=1.0.0 

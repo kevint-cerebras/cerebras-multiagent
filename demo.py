@@ -37,6 +37,9 @@ from smolagents import (
     CodeAgent,
     LiteLLMModel,
 )
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # -----------------------------------------------------------------------------
 # Custom tool: visit_webpage – fetch a page and turn it into markdown
@@ -114,9 +117,7 @@ def main(question: str):
 
 if __name__ == "__main__":
     demo_prompt = (
-        "Plan a perfect geeky weekend in San Francisco for a visiting AI enthusiast. "
-        "Find one cool tech meetup on Saturday evening, an unusual bookstore to visit on Sunday morning, "
-        "and a scenic cafe with good Wi‑Fi for Sunday afternoon hacking. Provide the walking distance between "
-        "each stop, both in kilometres and in 'Wafer‑Scale Engine diagonals' (21.5 cm per WSE). End with a rhyming slogan!"
+        "Find 3 highly-rated coffee shops in downtown Seattle and calculate the walking distance between them in both miles and kilometers. "
+        "Include the coffee shop names, ratings, addresses, and brief descriptions of what makes each one special."
     )
     main(demo_prompt)
