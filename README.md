@@ -208,7 +208,7 @@ npm run build
 
 - **Issues**: [GitHub Issues](https://github.com/kevint-cerebras/cerebras-multiagent/issues)
 - **Docs**: [Cerebras Documentation](https://cerebras.ai/docs)
-- **Framework**: [SmolaGents](https://github.com/smolagents)
+- **Framework**: [SmolaGents](https://github.com/huggingface/smolagents)
 
 ---
 
